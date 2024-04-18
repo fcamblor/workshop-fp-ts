@@ -24,18 +24,18 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Option", () => {
-  it.todo("You can create options of the none type", () => {
-    const result = TO_REPLACE;
+  it("You can create options of the none type", () => {
+    const result = O.none;
 
     expect((result as any)._tag).toEqual("None");
   });
 
-  it.todo("You can create options of the some type", () => {
+  it("You can create options of the some type", () => {
     const input = 42;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const result = pipe(input, TO_REPLACE);
+    const result = pipe(input, O.some);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -45,10 +45,10 @@ describe("Option", () => {
     expect(result.value).toEqual(42);
   });
 
-  it.todo("You can build an option from a possibly nullish value", () => {
+  it("You can build an option from a possibly nullish value", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: any) => pipe(x, TO_REPLACE);
+    const fn = (x: any) => pipe(x, O.fromNullable);
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -61,14 +61,16 @@ describe("Option", () => {
     expect(O.isNone(resultFromUndefined)).toEqual(true);
   });
 
-  it.todo(
+  it(
     "You can conditionally build a Some or None according to a predicate",
     () => {
       const isEven = (x: number) => x % 2 === 0;
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const fn = (x: number) => pipe(x, TO_REPLACE);
+      // Not sure this is good...
+      const fn = (x: number) => pipe(x, O.some, O.filter(isEven));
+      // const fn = (x: number) => pipe(x, (x: number) => isEven(x)?O.some(x):O.none);
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -80,14 +82,14 @@ describe("Option", () => {
     }
   );
 
-  it.todo(
+  it(
     "You can extract a value in case of Some, providing a default value in case of None",
     () => {
       const isEven = (x: number) => x % 2 === 0;
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const fn = (x: number) => pipe(x, TO_REPLACE);
+      const fn = (x: number) => pipe(x, O.fromPredicate(isEven), O.getOrElse(() => 999));
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -99,14 +101,14 @@ describe("Option", () => {
     }
   );
 
-  it.todo(
+  it(
     "You can extract a value in case of Some, providing a default value in case of None, and they may be of different types",
     () => {
       const isEven = (x: number) => x % 2 === 0;
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const fn = (x: number) => pipe(x, TO_REPLACE);
+      const fn = (x: number) => pipe(x, O.fromPredicate(isEven), O.getOrElseW(() => "not even"));
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -118,14 +120,20 @@ describe("Option", () => {
     }
   );
 
-  it.todo(
+  it(
     "You can extract a value and transform it on the fly in case of Some, providing a default value in case of None",
     () => {
       const isEven = (x: number) => x % 2 === 0;
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const fn = (x: number) => pipe(x, TO_REPLACE);
+      const fn = (x: number) => pipe(x,
+        O.fromPredicate(isEven),
+        O.match(
+          () => `not an even value`,
+          v => `even value: ${v}`,
+        )
+      );
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -137,12 +145,15 @@ describe("Option", () => {
     }
   );
 
-  it.todo("You can map values", () => {
+  it("You can map values", () => {
     const isEven = (x: number) => x % 2 === 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(x, TO_REPLACE);
+    const fn = (x: number) => pipe(x,
+      O.fromPredicate(isEven),
+      O.map(v => `even value: _${v}_`),
+      O.getOrElse(() => `not an even value`));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -153,13 +164,17 @@ describe("Option", () => {
     expect(resultFromOddNumber).toEqual(`not an even value`);
   });
 
-  it.todo("You can filter values", () => {
+  it("You can filter values", () => {
     const isPositive = (x: number) => x > 0;
     const onNone = () => 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(O.some(x), TO_REPLACE);
+    const fn = (x: number) => pipe(
+      O.some(x),
+      O.filter(isPositive), // filter s'applique sur un Option alors que fromPredicate s'applique sur une value
+      O.match(() => 0, () => 1)
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -170,7 +185,7 @@ describe("Option", () => {
     expect(resultFromNegativeNumber).toEqual(0);
   });
 
-  it.todo("You can filter and map", () => {
+  it("You can filter and map", () => {
     const isZeroOrLess = (x: number) => x <= 0;
 
     const doDividePieOfSize = (total: number) => (x: number) =>
@@ -180,7 +195,12 @@ describe("Option", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const fn = (x: number) => pipe(O.some(x), TO_REPLACE);
+    const fn = (x: number) => pipe(
+      O.some(x),
+      // O.filterMap(doDividePieOfSize(4)), // both filterMap and flatMap are synonyms
+      O.flatMap(doDividePieOfSize(4)),
+      O.getOrElse(() => 0)
+    );
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
