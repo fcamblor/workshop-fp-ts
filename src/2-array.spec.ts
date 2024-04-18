@@ -8,26 +8,26 @@ import { TO_REPLACE } from "./utils";
  * https://gcanti.github.io/fp-ts/modules/Array.ts.html
  */
 describe("Array", () => {
-  it.todo("fp-ts functions are curried", () => {
+  it("fp-ts functions are curried", () => {
     const input = [1, 2, 3];
     const double = (i: number) => i * 2;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const result = A.map(double);
+    const result = pipe(input, A.map(double));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(result).toEqual([2, 4, 6]);
   });
 
-  it.todo("use pipe for better readability", () => {
+  it("use pipe for better readability", () => {
     const input = [1, 2, 3];
     const double = (i: number) => i * 2;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.map(i => i*2));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -40,58 +40,58 @@ describe("Array", () => {
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.filter(isOdd));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual([1, 3]);
   });
 
-  it.todo("check some items of an array", () => {
+  it("check some items of an array", () => {
     const input = [1, 2, 3];
     const isOdd = (i: number) => i % 2 !== 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const hasOddValue = pipe(input, TO_REPLACE);
+    const hasOddValue = pipe(input, A.exists(isOdd));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(hasOddValue).toEqual(true);
   });
 
-  it.todo("check every items of an array", () => {
+  it("check every items of an array", () => {
     const input = [1, 3, 5];
     const isOdd = (i: number) => i % 2 !== 0;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const hasOnlyOddValues = pipe(input, TO_REPLACE);
+    const hasOnlyOddValues = pipe(input, A.every(isOdd));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(hasOnlyOddValues).toEqual(true);
   });
 
-  it.todo("flatMap an array", () => {
+  it("flatMap an array", () => {
     const input = [1, 2, 3];
     const clone = (i: number) => [i, i];
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE);
+    const resultWithPipe = pipe(input, A.flatMap(clone));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(resultWithPipe).toEqual([1, 1, 2, 2, 3, 3]);
   });
 
-  it.todo("reduce an array", () => {
+  it("reduce an array", () => {
     const input = [1, 2, 3];
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const resultWithPipe = pipe(input, TO_REPLACE, (total) => ({
+    const resultWithPipe = pipe(input, A.reduce(0, (total, v) => total+v), (total) => ({
       total,
     }));
 
