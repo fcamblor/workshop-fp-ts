@@ -30,20 +30,20 @@ import { TO_REPLACE } from "./utils";
  */
 
 describe("Either", () => {
-  it.todo("With E.map, you can transform the Right value of an Either", () => {
+  it("With E.map, you can transform the Right value of an Either", () => {
     const input = E.right(1);
     const double = (i: number) => i * 2;
 
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const result = pipe(input, TO_REPLACE);
+    const result = pipe(input, E.map(double));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
     expect(result).toEqual(E.right(2));
   });
 
-  it.todo(
+  it(
     "With E.mapLeft, you can transform the Left value of an Either",
     () => {
       const input = E.left(1);
@@ -51,7 +51,7 @@ describe("Either", () => {
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const result = pipe(input, TO_REPLACE);
+      const result = pipe(input, E.mapLeft(double));
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -59,10 +59,10 @@ describe("Either", () => {
     }
   );
 
-  it.todo("You can create a Either from a nullable value", () => {
+  it("You can create a Either from a nullable value", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const toEither = (n: number | null) => pipe(n, TO_REPLACE);
+    const toEither = (n: number | null) => pipe(n, E.fromNullable(`No value provided`))
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -70,10 +70,10 @@ describe("Either", () => {
     expect(toEither(null)).toEqual(E.left("No value provided"));
   });
 
-  it.todo("You can create a Either from an Option", () => {
+  it("You can create a Either from an Option", () => {
     // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-    const toEither = (n: O.Option<number>) => pipe(n, TO_REPLACE);
+    const toEither = (n: O.Option<number>) => pipe(n, E.fromOption(() => "No value provided"));
 
     // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -81,14 +81,16 @@ describe("Either", () => {
     expect(toEither(O.none)).toEqual(E.left("No value provided"));
   });
 
-  it.todo(
+  it(
     "With E.fromPredicate, you can conditionnaly create a Left or a Right",
     () => {
       const isEven = (i: number) => i % 2 === 0;
 
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const onlyEvenNumbers = (n: number) => pipe(n, TO_REPLACE);
+      const onlyEvenNumbers = (n: number) => pipe(n, E.fromPredicate(
+        isEven, n => `${n} is not even`
+      ));
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -99,12 +101,12 @@ describe("Either", () => {
     }
   );
 
-  it.todo(
+  it(
     "You can extract a value, providing a default value in case of left",
     () => {
       // ⬇⬇⬇⬇ Code here ⬇⬇⬇⬇
 
-      const getValue = (n: E.Either<string, number>) => pipe(n, TO_REPLACE);
+      const getValue = (n: E.Either<string, number>) => pipe(n, E.getOrElse(() => -1));
 
       // ⬆⬆⬆⬆ Code here ⬆⬆⬆⬆
 
@@ -115,7 +117,7 @@ describe("Either", () => {
     }
   );
 
-  it.todo("You can flatten nested Eithers", () => {
+  it("You can flatten nested Eithers", () => {
     const keepOnlyEven = E.fromPredicate(
       (n: number) => n % 2 === 0,
       () => "Not a multiple of 2"
